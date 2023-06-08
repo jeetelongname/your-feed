@@ -1,0 +1,32 @@
+#+title: Endpoints
+
+* pages
+#+begin_src restclient
+# pages
+GET /
+GET /settings
+GET /<username>/list
+
+# The feed
+GET /<username>/feed.atom
+
+#+end_src
+
+* operations
+#+begin_src restclient
+# operations
+## submit a new list
+POST /submit
+## remove a list
+POST /remove
+## log in to site
+POST /login
+## log out of site
+POST /logout
+#+end_src
+** Register
+#+begin_src restclient
+POST https://localhost:9292/register
+
+
+#+end_src

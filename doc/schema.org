@@ -1,0 +1,5 @@
+#+title: Schema
+
+Database schema
+
+[[edraw:data=H4sIAH3Bf2QAA7WR3U7EIBCFX4WM1y2lqxtjSt/CB8Dym21hA7i0Pr3TbtX1wpiYeMGQyXC+c4AuXQwpTmbL4aFpgFjljM17c1ExueA5sJoBmafRJw425/MTpaWUuhzqEA1tm6ahCIK+i2rIP/NmDliXrWo3jhzutNZAUo7hpDj44BUQJzkoGUWpXsRwMjG8egmE9p25HQW5fPh9l+9gKVEU0ZGhWVyuO7b31wTrtudkx5ucbM1J/wI+/Du5/Q2d1ZyJDj5XWkxuREkSPlVJRYevvA2Se0Nb9ghkPVwJP9gQOUxOyvErSdu2m/Px80r9M1I6uor6jhpc+OH9O+XAb14/AgAA]]

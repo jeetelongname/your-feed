@@ -6,6 +6,15 @@
         <main>
             <h1>Welcome <%= username %></h1>
 
+            <form method="POST" id="article" action="/submit">
+                <input type="text"
+                       name="article"
+                       placeholder="Article here"
+                />
+            </form>
+
+            <h1> <%= error %> </h1>
+
             <form method="POST" id="logout" action="/logout">
                 <input type="submit" name="logout" value="logout" />
             </form>

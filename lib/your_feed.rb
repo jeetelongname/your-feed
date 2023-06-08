@@ -3,6 +3,7 @@
 require 'your_feed/version'
 require 'your_feed/db'
 require 'your_feed/user_management'
+require 'your_feed/article_management'
 
 require 'sinatra/base'
 
@@ -56,6 +57,15 @@ module YourFeed
 
     post '/logout' do
       session.delete(:token)
+      redirect '/'
+    end
+
+    post '/submit' do
+      response = insert_article(db, params['article'], session[:token])
+      case response
+      in { err: }
+        redirect "/?error=#{err}"
+      end
       redirect '/'
     end
   end

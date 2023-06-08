@@ -5,6 +5,8 @@ require 'sqlite3'
 module YourFeed
   # all of the database things
   class Db
+    # The underlying database connection
+    # @return [Sqlite3::Database]
     attr_reader :db
 
     # set up the db.
@@ -34,6 +36,8 @@ module YourFeed
       SQL
     end
 
+    # @param args [String, String, String]  username, password, session token
+    # @return [Nil]
     def insert_user(*args)
       @db.execute(
         'insert into user (username, password_hash, session_token) values ( ?, ?, ? );',
@@ -41,6 +45,8 @@ module YourFeed
       )
     end
 
+    # @param token [String] A session token
+    # @return [Hash{Symbol => String}] a single result line
     def get_user(token)
       result = @db.query(
         'select user_id, username, password_hash, date_added from user where session_token = ?',
@@ -52,6 +58,8 @@ module YourFeed
       result_hash.to_h.map { [_1.to_sym, _2] }.to_h
     end
 
+    # @param username [String]
+    # @return [String]
     def get_passhash(username)
       @db.execute(
         'select password_hash from user where username = ?',
@@ -59,6 +67,9 @@ module YourFeed
       ).first.first
     end
 
+    # @param username [String] a users username
+    # @param session_token [String] a new session token
+    # @return [Nil]
     def set_session_token(username, session_token)
       @db.execute(
         'update user set session_token = ? where username = ?;',
@@ -67,26 +78,31 @@ module YourFeed
       )
     end
 
+    # @param name [String] username
+    # @return [Boolean]
     def username_exists?(name)
       result = @db.execute('select * from user where username = ?;', name)
       !result.empty?
     end
 
+    # @param link_hash [String] a hashed url
+    # @return [Boolean]
     def article_exists?(link_hash)
       result = @db.execute('select * from article where link_hash = ?', link_hash)
 
       !result.empty?
     end
 
+    # @param link_hash [String] a hashed link url
+    # @param url [String] the unhashed link url
+    # @param user_id [FixNum] the id of a user
+    # @return [nil]
     def insert_article(link_hash, url, user_id)
       @db.execute(
         'insert into article (link_hash, url) values (?, ?);',
         link_hash,
         url
       )
-
-      puts :hello
-
       @db.execute(
         'insert into user_article (user_id, link_hash) values (?, ?);',
         user_id,
@@ -95,6 +111,7 @@ module YourFeed
     end
 
     # should be called before the program finishes.
+    # @return [nil]
     def finalize
       @db.close
     end

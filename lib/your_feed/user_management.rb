@@ -5,11 +5,17 @@ require 'securerandom'
 module YourFeed
   # all user management code here
   module UserManagement
+    # Generate a new user token
+    # @return [String]
     def generate_token
       SecureRandom.bytes(32).to_s
     end
 
-    # Register a first time user, return a session token.
+    # Register a first time user
+    # @param db [Db] the database wrapper
+    # @param username [String]
+    # @param password [String]
+    # @return [String] a new session token
     def register(db, username, password)
       return { err: "Username or Password can't be empty" } if username.empty? || password.empty?
 
@@ -28,6 +34,10 @@ module YourFeed
     end
 
     # log a user in
+    # @param db [Db] the database wrapper
+    # @param username [String]
+    # @param password [String]
+    # @return [String] a new session token
     def login(db, username, password)
       return { err: "Username or Password can't be empty" } if username.empty? || password.empty?
 

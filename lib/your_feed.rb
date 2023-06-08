@@ -12,7 +12,6 @@ module YourFeed
   class App < Sinatra::Base
     # setup
     enable :sessions
-
     db = Db.new
     helpers UserManagement, ArticleManagement
 

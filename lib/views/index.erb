@@ -1,24 +1,12 @@
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title>Your Feed</title>
+        <title>Your feed</title>
     </head>
     <body>
-        <main>
-            <h1>Your feed</h1>
-            <h2>Login</h2>
-            <form method="POST" id="login" action="/login">
-                <input type="text" name="username" placeholder="username" />
-                <input type="password" name="password" placeholder="password" />
-                <input type="submit" value="Submit">
-            </form>
-            <h2>Register</h2>
-            <form method="POST" id="register" action="/register">
-                <input type="text" name="username" placeholder="username" />
-                <input type="password" name="password" placeholder="password" />
-                <input type="submit" value="Submit">
-            </form>
-
-            <%= error %>
-        </main>
+        <h1>Your feed</h1>
+        <a href="/login">< login ></a>
+        <p>
+            An introduction to the site
+        </p>
     </body>
 </html>

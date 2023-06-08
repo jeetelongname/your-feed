@@ -13,17 +13,20 @@ module YourFeed
     enable :sessions
 
     db = Db.new
-    helpers UserManagement
+    helpers UserManagement, ArticleManagement
 
     # routes
     get '/' do
-      if session[:token]
-        puts :inside
-        username = db.get_user_from_token(session[:token])
-        erb :indexloggedin, locals: { username: }
+      if (token = session[:token])
+        db.get_user(token) => { username:, **}
+        erb :indexloggedin, locals: { username:, error: params['error'] }
       else
-        erb :index, locals: { error: params['error'] }
+        erb :index
       end
+    end
+
+    get '/login' do
+      erb :login, locals: { error: params['error'] }
     end
 
     post '/login' do
@@ -31,7 +34,7 @@ module YourFeed
 
       case response
       in { err: }
-        redirect "/?error=#{err}"
+        redirect "/login?error=#{err}"
       in session_token
         session[:token] = session_token
       end
@@ -43,7 +46,7 @@ module YourFeed
 
       case response
       in { err: }
-        redirect "/?error=#{err}"
+        redirect "/login?error=#{err}"
       in session_token
         session[:token] = session_token
       end

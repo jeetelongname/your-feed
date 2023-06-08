@@ -48,11 +48,15 @@ module YourFeed
       )
     end
 
-    def get_user_from_token(token)
-      @db.execute(
-        'select username from user where session_token = ?',
+    def get_user(token)
+      result = @db.query(
+        'select user_id, username, password_hash, date_added from user where session_token = ?',
         token
-      ).first.first
+      )
+      result_hash = result.next_hash
+      result.close
+      # HACK: I just want a hash man
+      result_hash.to_h.map { [_1.to_sym, _2] }.to_h
     end
 
     def get_passhash(username)

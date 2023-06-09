@@ -36,15 +36,6 @@ module YourFeed
       SQL
     end
 
-    # @param args [String, String, String]  username, password, session token
-    # @return [Nil]
-    def insert_user(*args)
-      @db.execute(
-        'insert into user (username, password_hash, session_token) values ( ?, ?, ? );',
-        args
-      )
-    end
-
     # @param token [String] A session token
     # @return [Hash{Symbol => String}] a single result line
     def get_user(token)
@@ -82,17 +73,6 @@ module YourFeed
       @db.execute(query, token).map(&:first)
     end
 
-    # @param username [String] a users username
-    # @param session_token [String] a new session token
-    # @return [Nil]
-    def set_session_token(username, session_token)
-      @db.execute(
-        'update user set session_token = ? where username = ?;',
-        session_token,
-        username
-      )
-    end
-
     # @param name [String] username
     # @return [Boolean]
     def username_exists?(name)
@@ -103,9 +83,21 @@ module YourFeed
     # @param link_hash [String] a hashed url
     # @return [Boolean]
     def article_exists?(link_hash)
-      result = @db.execute('select * from article where link_hash = ?', link_hash)
+      result = @db.execute(
+        'select * from article where link_hash = ?',
+        link_hash
+      )
 
       !result.empty?
+    end
+
+    # @param args [String, String, String]  username, password, session token
+    # @return [nil]
+    def insert_user(*args)
+      @db.execute(
+        'insert into user (username, password_hash, session_token) values ( ?, ?, ? );',
+        args
+      )
     end
 
     # @param link_hash [String] a hashed link url
@@ -122,6 +114,17 @@ module YourFeed
         'insert into user_article (user_id, link_hash) values (?, ?);',
         user_id,
         link_hash
+      )
+    end
+
+    # @param username [String] a users username
+    # @param session_token [String] a new session token
+    # @return [nil]
+    def set_session_token(username, session_token)
+      @db.execute(
+        'update user set session_token = ? where username = ?;',
+        session_token,
+        username
       )
     end
 

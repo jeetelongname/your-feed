@@ -25,10 +25,6 @@ module YourFeed
       end
     end
 
-    get '/login' do
-      erb :login, locals: { error: params['error'] }
-    end
-
     get '/articles' do
       if (token = session[:token])
         links = db.get_articles(token)
@@ -36,6 +32,10 @@ module YourFeed
       else
         redirect '/login?error=You need to be logged in'
       end
+    end
+
+    get '/login' do
+      erb :login, locals: { error: params['error'] }
     end
 
     post '/login' do

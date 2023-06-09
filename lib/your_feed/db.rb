@@ -67,6 +67,21 @@ module YourFeed
       ).first.first
     end
 
+    # get articles
+    # @param token [String] the users token
+    # @return [Array<String>] the list of urls
+    def get_articles(token)
+      query =  <<-SQL
+        select a.url
+        from ((article a
+        join user_article on a.link_hash = user_article.link_hash)
+        join user on user.user_id = user_article.user_id)
+        where user.session_token = ?;
+      SQL
+
+      @db.execute(query, token).map(&:first)
+    end
+
     # @param username [String] a users username
     # @param session_token [String] a new session token
     # @return [Nil]

@@ -29,6 +29,15 @@ module YourFeed
       erb :login, locals: { error: params['error'] }
     end
 
+    get '/articles' do
+      if (token = session[:token])
+        links = db.get_articles(token)
+        erb :links, locals: { links: }
+      else
+        redirect '/login?error=You need to be logged in'
+      end
+    end
+
     post '/login' do
       response = login db, params['username'], params['password']
 

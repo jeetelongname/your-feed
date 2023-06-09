@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <title>Your Feed</title>
+    </head>
+    <body>
+        <ul>
+            <% links.each do %>
+                <li>
+                    <a href="<%= _1 %>">
+                        <%= _1 %>
+                    </a>
+                </li>
+            <% end %>
+        </ul>
+    </body>
+</html>

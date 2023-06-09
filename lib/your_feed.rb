@@ -64,8 +64,9 @@ module YourFeed
       case response
       in { err: }
         redirect "/?error=#{err}"
+      else
+        redirect '/'
       end
-      redirect '/'
     end
   end
 end

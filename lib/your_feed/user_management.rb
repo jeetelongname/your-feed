@@ -7,9 +7,7 @@ module YourFeed
   module UserManagement
     # Generate a new user token
     # @return [String]
-    def generate_token
-      SecureRandom.bytes(32).to_s
-    end
+    def generate_token = SecureRandom.bytes(32).to_s
 
     # Register a first time user
     # @param db [Db] the database wrapper

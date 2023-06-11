@@ -7,6 +7,10 @@ require 'digest'
 module YourFeed
   # Article insertion and retrival
   module ArticleManagement
+    # @param url [String]
+    # @return [String]
+    def hash_article(url) = Digest::MD5.digest url
+
     # @param db [Db] the db object
     # @param article [String] an article url
     # @param user_token [String] the users session token
@@ -14,7 +18,7 @@ module YourFeed
     def insert_article(db, article, user_token)
       db.get_user(user_token) => { user_id: }
 
-      link_hash = Digest::MD5.digest article
+      link_hash = hash_article article
 
       if db.article_exists?(link_hash)
         return {

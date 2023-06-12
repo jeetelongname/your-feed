@@ -58,7 +58,7 @@ module YourFeed
       @db.execute(
         'select password_hash from user where username = ?',
         username
-      ).first.first
+      ).dig(0, 0)
     end
 
     # get articles

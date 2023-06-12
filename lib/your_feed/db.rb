@@ -30,12 +30,15 @@ module YourFeed
       create table if not exists user_article (
         user_id integer not null references user(user_id),
         link_hash text not null references article(link_hash),
+        is_read integer not null,
         date_added timestamp default current_timestamp,
         primary key (user_id, link_hash)
       );
       SQL
     end
 
+    # TODO: make this more effient,
+    # in so far as it takes in a list of keywords that then get fetched instead
     # @param token [String] A session token
     # @return [Hash{Symbol => String}] a single result line
     def get_user(token)
@@ -63,14 +66,14 @@ module YourFeed
     # @return [Array<String>] the list of urls
     def get_articles(token)
       query =  <<-SQL
-        select a.url
+        select a.url, user_article.is_read
         from ((article a
         join user_article on a.link_hash = user_article.link_hash)
         join user on user.user_id = user_article.user_id)
         where user.session_token = ?;
       SQL
 
-      @db.execute(query, token).map(&:first)
+      @db.execute(query, token)
     end
 
     # @param name [String] username
@@ -113,7 +116,8 @@ module YourFeed
       @db.execute(
         'insert into user_article (user_id, link_hash) values (?, ?);',
         user_id,
-        link_hash
+        link_hash,
+        0
       )
     end
 
@@ -127,6 +131,33 @@ module YourFeed
         username
       )
     end
+
+    def toggle_article_is_read(link_hash, token)
+      get_user(token) => { user_id: }
+
+      old_val = @db.execute(
+        'select is_read from user_article where link_hash = ? and user_id = ?;',
+        link_hash,
+        user_id
+      ).dig(0, 0)
+
+      new_val, new_text = if old_val.zero?
+                            [1, 'unmark as read']
+                          else
+                            [0, 'mark as read']
+                          end
+
+      @db.execute(
+        'update user_article set is_read = ? where user_id = ? and link_hash = ?;',
+        new_val,
+        user_id,
+        link_hash
+      )
+
+      new_text
+    end
+
+    def delete_article(_link_hash, _token); end
 
     # should be called before the program finishes.
     # @return [nil]

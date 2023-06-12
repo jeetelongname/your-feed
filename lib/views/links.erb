@@ -2,11 +2,17 @@
     <%= erb :head %>
     <body>
         <ul>
-            <% links.each do %>
+            <% links.each do |(link, is_read)| %>
                 <li>
-                    <a href="<%= _1 %>">
-                        <%= _1 %>
+                    <a href="<%= link %>">
+                        <%= link %>
                     </a>
+                    <a hx-post="/toggleread?url=<%= link %>" hx-swap="innerHTML">
+                        <%= if is_read.zero? then "mark as read" else "unmark as read" end %>
+                    </a>
+                    <!-- <a hx-delete="/delete?url=<%= link %>">
+                         Delete this link
+                         </a> -->
                 </li>
             <% end %>
         </ul>

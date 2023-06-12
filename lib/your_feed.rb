@@ -77,5 +77,21 @@ module YourFeed
         redirect '/'
       end
     end
+
+    # edit an article
+    post '/toggleread' do
+      new_text = db.toggle_article_is_read(
+        hash_article(params['url']),
+        session[:token]
+      )
+
+      erb new_text
+    end
+
+    delete '/delete' do
+      db.delete_article(hash_article(params['url']), sessions[:token])
+      redirect '/articles'
+      204
+    end
   end
 end

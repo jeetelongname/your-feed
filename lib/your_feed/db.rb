@@ -132,6 +132,9 @@ module YourFeed
       )
     end
 
+    # @param link_hash [String] the hash of the url given
+    # @param token [String] the user token
+    # @return [String] the new button text
     def toggle_article_is_read(link_hash, token)
       get_user(token) => { user_id: }
 

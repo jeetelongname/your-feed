@@ -18,7 +18,7 @@ module YourFeed
     # routes
     get '/' do
       if (token = session[:token])
-        db.get_user(token) => { username:, **}
+        db.get_user(token) => { username: }
         erb :indexloggedin, locals: { username:, error: params['error'] }
       else
         erb :index

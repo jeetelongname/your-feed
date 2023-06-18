@@ -37,43 +37,55 @@ module YourFeed
       SQL
     end
 
+    def get_user_id(token: false, username: false)
+      args = if token
+               ['select user_id from user where session_token = ?', token]
+             elsif username
+               ['select user_id from user where username = ?', username]
+             else
+               raise 'this should never happen' # if it does, fix it.
+             end
+
+      @db.execute(*args).dig(0, 0)
+    end
+
     # TODO: make this more effient,
     # in so far as it takes in a list of keywords that then get fetched instead
     # @param token [String] A session token
     # @return [Hash{Symbol => String}] a single result line
     def get_user(token)
       result = @db.query(
-        'select user_id, username, password_hash, date_added from user where session_token = ?',
-        token
+        'select user_id, username, password_hash, date_added from user where user_id = ?',
+        get_user_id(token:)
       )
       result_hash = result.next_hash
       result.close
       # HACK: I just want a hash man
-      result_hash.to_h.map { [_1.to_sym, _2] }.to_h
+      result_hash.map { [_1.to_sym, _2] }.to_h
     end
 
     # @param username [String]
     # @return [String]
     def get_passhash(username)
       @db.execute(
-        'select password_hash from user where username = ?',
-        username
+        'select password_hash from user where user_id = ?',
+        get_user_id(username:)
       ).dig(0, 0)
     end
 
     # get articles
-    # @param token [String] the users token
+    # @param username_or_token [Hash{Symbol => String}] Either a users name { username: "username"} or a users token { token: "token"}. if both are provided the token is taken
     # @return [Array<String>] the list of urls
-    def get_articles(token)
+    def get_articles(**username_or_token)
       query =  <<-SQL
         select a.url, user_article.is_read
         from ((article a
         join user_article on a.link_hash = user_article.link_hash)
         join user on user.user_id = user_article.user_id)
-        where user.session_token = ?;
+        where user.user_id = ?;
       SQL
 
-      @db.execute(query, token)
+      @db.execute(query, get_user_id(**username_or_token))
     end
 
     # @param name [String] username
@@ -116,8 +128,7 @@ module YourFeed
       @db.execute(
         'insert into user_article (user_id, link_hash) values (?, ?);',
         user_id,
-        link_hash,
-        0
+        link_hash
       )
     end
 
@@ -126,9 +137,9 @@ module YourFeed
     # @return [nil]
     def set_session_token(username, session_token)
       @db.execute(
-        'update user set session_token = ? where username = ?;',
+        'update user set session_token = ? where user_id = ?;',
         session_token,
-        username
+        get_user_id(username:)
       )
     end
 
@@ -136,7 +147,7 @@ module YourFeed
     # @param token [String] the user token
     # @return [String] the new button text
     def toggle_article_is_read(link_hash, token)
-      get_user(token) => { user_id: }
+      get_user_id(token:) => user_id
 
       old_val = @db.execute(
         'select is_read from user_article where link_hash = ? and user_id = ?;',
@@ -160,6 +171,7 @@ module YourFeed
       new_text
     end
 
+    # TODO
     def delete_article(_link_hash, _token); end
 
     # should be called before the program finishes.

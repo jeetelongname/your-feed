@@ -38,6 +38,15 @@ module YourFeed
       erb :login, locals: { error: params['error'] }
     end
 
+    get(%r{/.+\.atom}) do
+      %r{/(?<username>.+)\.atom}.match(request.path) => { username: }
+
+      # TODO: actual error response!
+      return "miss!\n" unless db.username_exists? username
+
+      db.get_articles(username:).to_s
+    end
+
     post '/login' do
       response = login db, params['username'], params['password']
 

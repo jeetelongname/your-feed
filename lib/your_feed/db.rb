@@ -81,11 +81,10 @@ module YourFeed
     # @param username_or_token [Hash{Symbol => String}] Either a users name { username: "username"} or a users token { token: "token"}. if both are provided the token is taken
     # @return [Array<String>] the list of urls
     def get_articles(**username_or_token)
-      query =  <<-SQL
-        select a.url, user_article.is_read
-        from ((article a
-        join user_article on a.link_hash = user_article.link_hash)
-        join user on user.user_id = user_article.user_id)
+      query =  <<~SQL
+        select article.url, user_article.is_read from article
+        join user on user.user_id = user_article.user_id
+        join user_article on user_article.link_hash = article.link_hash
         where user.user_id = ?;
       SQL
 

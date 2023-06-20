@@ -1,4 +1,5 @@
 # lib/db.rb
+# frozen_string_literal: true
 
 require 'sqlite3'
 
@@ -37,7 +38,10 @@ module YourFeed
       SQL
     end
 
-    def get_user_id(token: false, username: false)
+    # @param token [String | nil] the users token
+    # @param username [String | nil] a username
+    # @return nil
+    def get_user_id(token: nil, username: nil)
       args = if token
                ['select user_id from user where session_token = ?', token]
              elsif username

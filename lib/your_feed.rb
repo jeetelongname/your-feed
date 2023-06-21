@@ -4,6 +4,7 @@ require 'your_feed/version'
 require 'your_feed/db'
 require 'your_feed/user_management'
 require 'your_feed/article_management'
+require 'your_feed/entry_management'
 
 require 'sinatra/base'
 
@@ -13,7 +14,7 @@ module YourFeed
     # setup
     enable :sessions
     db = Db.new
-    helpers UserManagement, ArticleManagement
+    helpers UserManagement, ArticleManagement, EntryManagement
 
     # routes
     get '/' do
@@ -27,7 +28,7 @@ module YourFeed
 
     get '/articles' do
       if (token = session[:token])
-        links = db.get_articles(token)
+        links = db.get_articles_settings(token)
         erb :links, locals: { links: }
       else
         redirect '/login?error=You need to be logged in'
@@ -38,13 +39,10 @@ module YourFeed
       erb :login, locals: { error: params['error'] }
     end
 
-    get(%r{/.+\.atom}) do
+    get %r{/.+\.atom} do
       %r{/(?<username>.+)\.atom}.match(request.path) => { username: }
 
-      # TODO: actual error response!
-      return "miss!\n" unless db.username_exists? username
-
-      db.get_articles(username:).to_s
+      return_feed(db, username)
     end
 
     post '/login' do

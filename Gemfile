@@ -22,3 +22,5 @@ gem 'solargraph', '~> 0.49.0'
 gem 'sqlite3', '~> 1.6'
 
 gem 'bcrypt', '~> 3.1', '>= 3.1.5'
+
+gem 'nokogiri', '~> 1.15', '>= 1.15.2'

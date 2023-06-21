@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'bcrypt', '~> 3.1'
+  spec.add_dependency 'nokogiri', '~> 1.15'
   spec.add_dependency 'puma', '~> 6.3'
   spec.add_dependency 'rackup', '~> 1.0'
   spec.add_dependency 'sinatra', '~> 3.0'

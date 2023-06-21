@@ -50,7 +50,7 @@ module YourFeed
                raise 'this should never happen' # if it does, fix it.
              end
 
-      @db.execute(*args).dig(0, 0)
+      @db.get_first_value(*args)
     end
 
     # TODO: make this more effient,
@@ -152,11 +152,11 @@ module YourFeed
     def toggle_article_is_read(link_hash, token)
       get_user_id(token:) => user_id
 
-      old_val = @db.execute(
+      old_val = @db.get_first_value(
         'select is_read from user_article where link_hash = ? and user_id = ?;',
         link_hash,
         user_id
-      ).dig(0, 0)
+      )
 
       new_val, new_text = if old_val.zero?
                             [1, 'unmark as read']

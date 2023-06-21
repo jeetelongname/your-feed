@@ -31,7 +31,8 @@ module YourFeed
       create table if not exists user_article (
         user_id integer not null references user(user_id),
         link_hash text not null references article(link_hash),
-        is_read integer not null,
+        is_read integer default 0,
+        is_used integer default 0,
         date_added timestamp default current_timestamp,
         primary key (user_id, link_hash)
       );
@@ -71,18 +72,34 @@ module YourFeed
     # @param username [String]
     # @return [String]
     def get_passhash(username)
-      @db.execute(
+      @db.get_first_value(
         'select password_hash from user where user_id = ?',
         get_user_id(username:)
-      ).dig(0, 0)
+      )
     end
 
-    # get articles
+    # get articles for a settings page
     # @param username_or_token [Hash{Symbol => String}] Either a users name { username: "username"} or a users token { token: "token"}. if both are provided the token is taken
     # @return [Array<String>] the list of urls
-    def get_articles(**username_or_token)
+    def get_articles_settings(**username_or_token)
       query =  <<~SQL
-        select article.url, user_article.is_read from article
+        select article.url, user_article.is_read
+        from article
+        join user on user.user_id = user_article.user_id
+        join user_article on user_article.link_hash = article.link_hash
+        where user.user_id = ?;
+      SQL
+
+      @db.execute(query, get_user_id(**username_or_token))
+    end
+
+    # get articles for feed generation
+    # @param username_or_token [Hash{Symbol => String}] Either a users name { username: "username"} or a users token { token: "token"}. if both are provided the token is taken
+    # @return [Array<Hash{Symbol => String, Integer}>] the list of urls
+    def get_articles_feed(**username_or_token)
+      query =  <<~SQL
+        select article.url, user_article.is_read, user_article.date_added
+        from article
         join user on user.user_id = user_article.user_id
         join user_article on user_article.link_hash = article.link_hash
         where user.user_id = ?;
